@@ -21,10 +21,13 @@ if [ $# = 3 ]; then
             fi
         fi
             # display the newest file
-        echo "$newestFile"
+        echo "The newest file is $newestFile."
+    else
+        # display message because at least one name if not a file
+        echo "One or more of the names provided were not actual files."
     fi
 else
-    # display error message if name are not files
-    echo "Error. One or more names provided are not actual files."
+    # display error message if argument count is not 3
+    echo "Error. Need three (3) file names to proceed."
     exit 1
 fi
