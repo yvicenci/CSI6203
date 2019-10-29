@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This function prints a given error
+# This function prints the argument as the error message
 printError()
 {
     echo -e "\033[31mERROR:\033[0m $1"
@@ -16,6 +16,7 @@ getNumber()
     done
 }
 
+# main
 echo "this is the start of the script"
 getNumber "please type a number between 1 and 10" 1 10
 echo "Thank you!"
