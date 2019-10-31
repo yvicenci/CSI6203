@@ -11,12 +11,12 @@ downloadFromInternet()
     read -p "Type the URL of a file to download: " url
     read -p "Type the location of where you would like to download the file to: " fileLocation
     wget $url -P $fileLocation
-    if [ $? = 0 ]; then
-        echo -e "${cyan}Download complete${clear}"
-    else
-        echo -e "${red}Sorry, something went wrong :( ${clear}"
-    fi
 }
 
 downloadFromInternet
+if [ $? = 0 ]; then
+        echo -e "${cyan}Download complete${clear}"
+    else
+        echo -e "${red}Sorry, something went wrong :( ${clear}"
+fi
 exit 0
