@@ -1,0 +1,5 @@
+Understand and execute scripts that use multiple
+functions in Linux
+Send information into functions and retrieve results
+from functions
+Use command substitution in Linux to solve problems
