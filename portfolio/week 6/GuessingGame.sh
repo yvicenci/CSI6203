@@ -21,7 +21,9 @@ min=1
 max=100
 magicNumber=42
 
-echo "------------- Welcome to the Guessing Game! ----------------"
+echo "--------------------------------"
+echo "Welcome to the Guessing Game!"
+echo "--------------------------------"
 getNumber "Guess the magic number between 1 and 100: " $min $max
 until [ $REPLY -eq $magicNumber ]; do
     if (( $REPLY < $magicNumber )); then
