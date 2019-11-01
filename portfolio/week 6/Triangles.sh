@@ -13,7 +13,7 @@ for((base=1; base<=10; base++))
 do
     for((height=1; height<=10; height++))
     do
-        echo 'The are for a triangle with base ' $base 'and height ' $height 'is 'calculateTriangleArea $base $height
+        echo -e 'The area for a triangle with base ' ${base} 'and height ' ${height} 'is ' $(calculateTriangleArea $base $height) '\n'
     done
 done
 exit 0
