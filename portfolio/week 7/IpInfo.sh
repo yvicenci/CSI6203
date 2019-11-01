@@ -11,7 +11,7 @@ s/broadcast/\n\t\tBroadcast Address:/
 p
 }')
 
-# Sformat output
+# format output
 echo -e "IP addresses on this computer are:\n$addresses"
 
 exit 0

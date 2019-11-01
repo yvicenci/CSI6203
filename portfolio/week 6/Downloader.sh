@@ -10,7 +10,8 @@ downloadFromInternet()
 {
     read -p "Type the URL of a file to download: " url
     read -p "Type the location of where you would like to download the file to: " fileLocation
-    wget $url -P $fileLocation
+    fileLocation="$fileLocation/index.html"
+    wget -O $fileLocation $url
 }
 
 downloadFromInternet

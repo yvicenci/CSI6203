@@ -1,8 +1,14 @@
 #!/bin/bash
 
-IFS#=
+IFS=
 # call Downloader.sh from workshop 6
-download=$(./../week\ 6/Downloader.sh)
+./../week\ 6/Downloader.sh
 
 # extract title of webpage downloaded
-sed -i 's/<title>/<Title>/; /<Title>/p' index.html
+webpage=$(cat index.html)
+
+webTitle=$(echo "$webpage" | sed -n -e '/<title>/ p' )
+
+# format output
+echo -e "Web page is $webTitle"
+exit 0
