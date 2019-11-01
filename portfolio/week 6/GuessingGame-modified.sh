@@ -33,5 +33,5 @@ until [ $REPLY -eq $magicNumber ]; do
     fi
     getNumber "Guess the magic number between 1 and 100: " $min $max
 done
-echo -e "Correct!"
+echo -e "Right!"
 exit 0
