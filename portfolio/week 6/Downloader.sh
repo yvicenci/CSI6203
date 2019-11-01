@@ -14,9 +14,9 @@ downloadFromInternet()
 }
 
 downloadFromInternet
-if [ $? = 0 ]; then
-        echo -e "${cyan}Download complete${clear}"
-    else
-        echo -e "${red}Sorry, something went wrong :( ${clear}"
-fi
+#if [ $? = 0 ]; then
+#        echo -e "${cyan}Download complete${clear}"
+#    else
+#        echo -e "${red}Sorry, something went wrong :( ${clear}"
+#fi
 exit 0

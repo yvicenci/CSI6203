@@ -13,3 +13,5 @@ p
 
 # Sformat output
 echo -e "IP addresses on this computer are:\n$addresses"
+
+exit 0
