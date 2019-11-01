@@ -27,11 +27,11 @@ echo "--------------------------------"
 getNumber "Guess the magic number between 1 and 100: " $min $max
 until [ $REPLY -eq $magicNumber ]; do
     if (( $REPLY < $magicNumber )); then
-        echo -e '\033[35mToo Low!\033[0m'
+        echo "Too low!"
     elif (( $REPLY > $magicNumber )); then
-        echo -e '\033[35mToo High!\033[0m'
+        echo "Too hight!"
     fi
     getNumber "Guess the magic number between 1 and 100: " $min $max
 done
-echo -e '\033[36mCorrect!\033[0m'
+echo -e "Correct!"
 exit 0
