@@ -1,0 +1,12 @@
+#        ${cyan}Download complete${clear}
+#        ${red}Sorry, something went wrong :( ${clear}
+    \033[31mERROR:\033[0m $1
+this is the start of the script
+Thank you!
+Thank you!
+    \033[31mERROR:\033[0m $1
+--------------------------------
+Welcome to the Guessing Game!
+--------------------------------
+        The area for a triangle with base $base and height $height is $(calculateTriangleArea $base $height) \n
+    \033[31mERROR: \033[0m $VAR1
