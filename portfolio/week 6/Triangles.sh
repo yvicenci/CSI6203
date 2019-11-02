@@ -9,11 +9,12 @@ calculateTriangleArea()
 }
 
 # main
-for((base=1; base<=100; base++))
+for((base=1; base<=10; base++))
 do
     for((height=1; height<=10; height++))
     do
-        echo -e "The area for a triangle with base $base and height $height is $(calculateTriangleArea $base $height) \n"
+        echo -e "The area for a triangle with base $base and height $height is $(calculateTriangleArea $base $height)"
     done
 done
+echo -e "\n"
 exit 0
