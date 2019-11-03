@@ -1,0 +1,15 @@
+Nov  3 02:30:01 ML-RefVm-771511 sshd[1012]: Server listening on 0.0.0.0 port 22.
+Nov  3 02:30:01 ML-RefVm-771511 sshd[1012]: Server listening on :: port 22.
+Nov  3 02:32:56 ML-RefVm-771511 xrdp-sesman[1894]: pam_unix(xrdp-sesman:session): session opened for user student by (uid=0)
+Nov  3 02:32:56 ML-RefVm-771511 systemd-logind[795]: New session c1 of user student.
+Nov  3 02:32:56 ML-RefVm-771511 systemd: pam_unix(systemd-user:session): session opened for user student by (uid=0)
+Nov  3 02:33:16 ML-RefVm-771511 polkitd(authority=local): Registered Authentication Agent for unix-session:c1 (system bus name :1.56 [/bin/lxqt-policykit-agent], object path /org/lxqt/PolicyKit1/AuthenticationAgent, locale C.UTF-8)
+Nov  3 02:36:48 ML-RefVm-771511 dbus-daemon[764]: [system] Rejected send message, 2 matched rules; type="method_call", sender=":1.114" (uid=1000 pid=2575 comm="/usr/share/code/code --unity-launch " label="unconfined") interface="org.freedesktop.DBus.ObjectManager" member="GetManagedObjects" error name="(unset)" requested_reply="0" destination="org.bluez" (bus)
+Nov  3 02:45:24 ML-RefVm-771511 dbus-daemon[764]: [system] Rejected send message, 2 matched rules; type="method_call", sender=":1.138" (uid=1000 pid=3377 comm="/usr/share/code/code /var/log/auth.log " label="unconfined") interface="org.freedesktop.DBus.ObjectManager" member="GetManagedObjects" error name="(unset)" requested_reply="0" destination="org.bluez" (bus)
+Nov  3 03:17:02 ML-RefVm-771511 CRON[5704]: pam_unix(cron:session): session opened for user root by (uid=0)
+Nov  3 03:17:02 ML-RefVm-771511 CRON[5704]: pam_unix(cron:session): session closed for user root
+Nov  3 04:17:01 ML-RefVm-771511 CRON[9918]: pam_unix(cron:session): session opened for user root by (uid=0)
+Nov  3 04:17:01 ML-RefVm-771511 CRON[9918]: pam_unix(cron:session): session closed for user root
+Nov  3 05:17:01 ML-RefVm-771511 CRON[14437]: pam_unix(cron:session): session opened for user root by (uid=0)
+Nov  3 05:17:01 ML-RefVm-771511 CRON[14437]: pam_unix(cron:session): session closed for user root
+Oct  1 05:17:01 ML-RefVm-771511 CRON[14437]: pam_unix(cron:session): session closed for user root
