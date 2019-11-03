@@ -19,9 +19,18 @@ function downloadImage()
 
 }
 
+function scrapeImage()
+{
+    date="2019 November 03"
+    local archive="etc/nasaArchive.html"
+    content=$(curl -s $archive)
+    echo "$content" | sed -n '/'"$date"'/ p'
+
+}
+
 # main
 # ping for 10 seconds only
-ping -w 10 apod.nasa.gov
+ping -w 5 apod.nasa.gov
 
 # Exit script if unable to ping NASA website
 if [ $? = 0 ]; then
@@ -30,5 +39,4 @@ if [ $? = 0 ]; then
     exit 1
 fi
 
-wget -O etc/archive.html https://apod.nasa.gov/apod/archivepix.html
-downloadImage
+scrapeImage
