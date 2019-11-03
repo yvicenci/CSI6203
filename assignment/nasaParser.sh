@@ -21,22 +21,28 @@ function downloadImage()
 
 function scrapeImage()
 {
-    date="2019 November 03"
+    local date="2019 November 03"
     local archive="etc/nasaArchive.html"
-    content=$(curl -s $archive)
-    echo "$content" | sed -n '/'"$date"'/ p'
+    #wget -O "$archive" https://apod.nasa.gov/apod/archivepix.html
+    awk -v date="$date" ' BEGIN { print date }
+    {
+        if( $0 ~ date ){
+            print $0
+        }
+    }
+    ' $archive | sed -rn 's/<a href="(.*)">/\1/p'
 
 }
 
 # main
 # ping for 10 seconds only
-ping -w 5 apod.nasa.gov
+# ping -w 2 apod.nasa.gov
 
 # Exit script if unable to ping NASA website
-if [ $? = 0 ]; then
-    # prompt user for the webpage to scrape
-    echo -e "${red} Sorry, unable to connect to the internet."
-    exit 1
-fi
+# if [ $? = 0 ]; then
+#     # prompt user for the webpage to scrape
+#     echo -e "${red} Sorry, unable to connect to the internet."
+#     exit 1
+# fi
 
 scrapeImage
