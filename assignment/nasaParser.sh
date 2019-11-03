@@ -30,7 +30,7 @@ function scrapeImage()
             print $0
         }
     }
-    ' $archive | sed -rn 's/<a href="(.*)">/\1/p'
+    ' $archive | sed -rne "s@$date:  <a href=\"(.*)\">(.*)</a><br>@\1@p"
 
 }
 
