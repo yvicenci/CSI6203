@@ -8,7 +8,8 @@ function downloadImage()
     local webpage=$(curl -s $url)
     # used <img> since its only one in a page
     local imageSrc=$(echo "$webpage" | sed -rn "s@<IMG SRC=\"(.*)\"@\1@p")
-    wget -O image.jpg "$nasaSite$imageSrc"
+    local title=$(echo "$webpage" | sed -rne "s@<b> (.*) <\/b> <br>@\1@p")
+    wget -O "$title.jpg" "$nasaSite$imageSrc"
     if [ $? = 0 ]; then
         echo -e "${green}Download Successful"
         exit 0
@@ -17,9 +18,9 @@ function downloadImage()
     exit 1
 }
 
-function scrapeImage()
+function getHtmlPage()
 {
-    local date="2019 November 03"
+    local date="2019 October 25"
     local archive="etc/nasaArchive.html"
     #wget -O "$archive" https://apod.nasa.gov/apod/archivepix.html
     awk -v date="$date" ' BEGIN { print date }
@@ -56,6 +57,6 @@ nasaSite="https://apod.nasa.gov/apod/"
 #     exit 1
 # fi
 
-htmlPage=$(scrapeImage)
+htmlPage=$(getHtmlPage)
 downloadImage $htmlPage
 exit 0
