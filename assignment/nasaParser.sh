@@ -1,22 +1,20 @@
 # Assignment for CSI6203
 # by Yvonne Vicencio
 
-black='\033[30m'
-red='\033[31m'
-green='\033[32m'
-brown='\033[33m'
-blue='\033[34m'
-purple='\033[35m'
-cyan='\033[36m'
-grey='\033[37m'
-
-nasaSite="https://apod.nasa.gov/apod/"
-
 function downloadImage()
 {
+    # combine NASA site and appropriate html page 
     local url=$nasaSite$1
-    echo $url
-
+    local webpage=$(curl -s $url)
+    # used <img> since its only one in a page
+    local imageSrc=$(echo "$webpage" | sed -rn "s@<IMG SRC=\"(.*)\"@\1@p")
+    wget -O image.jpg "$nasaSite$imageSrc"
+    if [ $? = 0 ]; then
+        echo -e "${green}Download Successful"
+        exit 0
+    fi
+    echo -e "${red}Something went wrong. Image not downloaded."
+    exit 1
 }
 
 function scrapeImage()
@@ -31,8 +29,21 @@ function scrapeImage()
         }
     }
     ' $archive | sed -rne "s@$date:  <a href=\"(.*)\">(.*)</a><br>@\1@p"
-
 }
+
+# setup
+IFS=
+# colours
+black='\033[30m'
+red='\033[31m'
+green='\033[32m'
+brown='\033[33m'
+blue='\033[34m'
+purple='\033[35m'
+cyan='\033[36m'
+grey='\033[37m'
+
+nasaSite="https://apod.nasa.gov/apod/"
 
 # main
 # ping for 10 seconds only
@@ -45,4 +56,6 @@ function scrapeImage()
 #     exit 1
 # fi
 
-scrapeImage
+htmlPage=$(scrapeImage)
+downloadImage $htmlPage
+exit 0

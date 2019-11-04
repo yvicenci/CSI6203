@@ -5,17 +5,16 @@ IFS=
 # get web content
 ecu=$(curl -s https://www.ecu.edu.au/degrees/study-areas/science)
 
-echo "$ecu" | awk '
-BEGIN { startProcess=0 }
-/section id="disciplines"/{
-    startProcess=1
-}
-{
-    while(startProcess==1){
-    next
-    /<a href="https:\/\/www.ecu.edu.au\/degrees\/study-areas\/science\/.* title/  print $0 }
-    /<\/section>/ { startProcess=0 }
+# use sed and awk to get disciplines in ECU Science
+echo "$ecu" | sed -rn "s@<a href=\"https://www.ecu.edu.au/degrees/study-areas/science.*\" title=\".*\">(.*)</a>@\1@p" | awk '
+    BEGIN { i=0; used[0]=""}
+    {
+        i+=1
+        if($0 in used)
+            next
+        else {
+            used[$0]=i
+            print $0
+        }
     }
-}
-
-' #| sed -rn "s@<a href=\"https://www.ecu.edu.au/degrees/study-areas/science.*\" title=\".*\">(.*)</a>@\1@p"
+'
