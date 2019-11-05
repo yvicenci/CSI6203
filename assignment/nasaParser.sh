@@ -1,12 +1,18 @@
 # Assignment for CSI6203
 # by Yvonne Vicencio
 
+function downloadTitle(){
+    local webpage=$1
+    local title=$(echo "$webpage" | sed -rne "s@<b> (.+)<\/b> <br>@\1@p")
+    echo $title
+}
+
 function downloadImage()
 {
     local webpage=$1
     # used <img> since its only one in a page
     local imageSrc=$(echo "$webpage" | sed -rn "s@<IMG SRC=\"(.*)\"@\1@p")
-    local title=$(echo "$webpage" | sed -rne "s@<b> (.+)<\/b> <br>@\1@p")
+    local title=$(downloadTitle $webpage)
     wget -O "$title.jpg" "$nasaSite$imageSrc"
     if [ $? = 0 ]; then
         echo -e "${green}Download Successful"
@@ -20,7 +26,7 @@ function downloadExplanation()
 {
     local webpage=$1
     echo $webpage > web.txt
-    echo "$webpage" | awk '
+    local explanation=$(echo "$webpage" | awk '
     BEGIN { pattern="<p> <center>"}
     /<b> Explanation: <\/b>/ { 
         start=1
@@ -35,8 +41,12 @@ function downloadExplanation()
             }            
         }
     }
-    ' | sed "s/<a href=\".*\"//g; s/<\/a>//g;
-    s/<p> <center>[[:space:]]*//g;s/>//g;" > output.txt
+    ' |
+    # cleanup the tags and blank lines
+    sed "s/<a href=\".*\"//g; s/<\/a>//g;
+    s/<p> <center>[[:space:]]*//g;s/>//g;
+    /^$/d")
+    echo "$explanation"
 }
 
 function getHtmlPage()
@@ -87,5 +97,5 @@ htmlPage=$(getHtmlPage)
 url="$nasaSite$htmlPage"
 page=$(curl -s $url)
 #downloadImage $page
-downloadExplanation $page
+#downloadExplanation $page
 exit 0
