@@ -1,7 +1,8 @@
 # Assignment for CSI6203
 # by Yvonne Vicencio
 
-function downloadTitle(){
+function downloadTitle()
+{
     local webpage=$1
     local title=$(echo "$webpage" | sed -rne "s@<b> (.+)<\/b> <br>@\1@p")
     echo $title
@@ -14,12 +15,12 @@ function downloadImage()
     local imageSrc=$(echo "$webpage" | sed -rn "s@<IMG SRC=\"(.*)\"@\1@p")
     local title=$(downloadTitle $webpage)
     wget -O "$title.jpg" "$nasaSite$imageSrc"
-    if [ $? = 0 ]; then
-        echo -e "${green}Download Successful"
-        exit 0
-    fi
-    echo -e "${red}Something went wrong. Image not downloaded."
-    exit 1
+    # if [ $? = 0 ]; then
+    #     echo -e "${green}Download Successful!\n"
+    #     exit 0
+    # fi
+    # echo -e "${red}Something went wrong. Image not downloaded."
+    # exit 1
 }
 
 function downloadExplanation()
@@ -45,12 +46,11 @@ function downloadExplanation()
     sed "s/<a href=\".*\"//g; s/<\/a>//g;
     s/<p> <center>[[:space:]]*//g;s/>//g;
     /^$/d")
-    echo "$explanation"
+    echo -e "EXPLANATION:\n $explanation"
 }
 
-function downloadImageWithRange()
+function downloadImagesWithRange()
 {
-    #d=$(date --date="$startdate +$n days")
     local startdate=20190512
     local enddate=20190515
     local d=
@@ -60,9 +60,6 @@ function downloadImageWithRange()
         d=$(date -d "$startdate + $n days" +%Y%m%d)
         ndate=$(date -d "$d" "+%Y %B %d")
        
-        # combine NASA site and appropriate html page 
-        url="$nasaSite$htmlPage"
-        page=$(curl -s $url)
         wpage=$(getHtmlFile "$ndate")
         downloadImage "$wpage"
         echo "$ndate"
@@ -73,26 +70,24 @@ function downloadImageWithRange()
 function getHtmlFile()
 {
     local date=$1
-    local archive="etc/nasaArchive.html"
-    #wget -O "$archive" https://apod.nasa.gov/apod/archivepix.html
-    awk -v date="$date" ' BEGIN { print date }
+    htmlPage=$(awk -v date="$date" ' 
+    BEGIN { print date }
     {
         if( $0 ~ date ){
             print $0
         }
     }
-    ' $archive | sed -rne "s@$date:  <a href=\"(.*)\">(.*)</a><br>@\1@p"
+    ' $archive | sed -rne "s@$date:  <a href=\"(.*)\">(.*)</a><br>@\1@p")
+
+    # combine NASA site and appropriate html page 
+    url="$nasaSite$htmlPage"
+    page=$(curl -s $url)
+    echo $page
 }
 
 function formatDate()
 {
-    $(date -d "$1")
-    if [ $? != 0 ]; then
-        echo -e "${red}Not a valid date. Exiting..."
-        return 1
-    else
-        echo date -d "$1" "+%Y %B %d"
-    fi
+    echo $(date -d "$1" "+%Y %B %d")
 }
 
 # setup
@@ -104,6 +99,7 @@ purple='\033[35m'
 cyan='\033[36m'
 
 nasaSite="https://apod.nasa.gov/apod/"
+archive="etc/nasaArchive.html"
 
 # main
 # ping for 10 seconds only
@@ -117,40 +113,34 @@ nasaSite="https://apod.nasa.gov/apod/"
 # fi
 
 # Process command line options
-if [ $# = 0 ]; then
-    echo -e "${red}No arguments provided."
+if [ $# < 2 ]; then
+    echo -e "${red}Not enough arguments provided."
     exit 1
-elif [ $# = 1 ]; then
-    echo -e "${purple}Not enough arguments provided"
-    exit 1
-elif [ $# = 2 ]; then
+else
     fullDate=$(formatDate "$2")
-    echo "$fullDate"
-    if [ $fullDate = 1 ]; then
-        exit 1;
-    fi
-    htmlPage=$(getHtmlFile "$fullDate")
-    # combine NASA site and appropriate html page 
-    url="$nasaSite$htmlPage"
-    page=$(curl -s $url)
-    
+    # get the nasa archive page 
+    wget -O "$archive" https://apod.nasa.gov/apod/archivepix.html
+    page=$(getHtmlFile "$fullDate")
+
     # check arguments
     case $1 in
-        # download image
         "-i")
             downloadImage $page;;
-            #downloadExplanation $page
-            #downloadImageWithRange $page;;
-        # download details
         "-d")
-            echo "Distinction";;
+            downloadTitle $page
+            downloadExplanation $page;;
+        "-r")
+            downloadImagesWithRange "$page";;
+        # specify image filename
+        "-if")
+            downloadImage $page "$3";;
+        # specify details output file
+        "-do")
+            cat downloadTitle $page > "$3"
+            cat downloadExplanation $page > "$3"
+            echo -e "${green}Details successfully saved.";;
         *)
-            echo "${red}Unknown option."
+            echo -e "${red}Unknown option."
             exit 1;;
     esac
-elif [ $# = 3 ]; then
-    echo "blah"
 fi
-
-echo -e "${cyan}Done!"
-exit 0
