@@ -3,12 +3,10 @@
 
 function downloadImage()
 {
-    # combine NASA site and appropriate html page 
-    local url=$nasaSite$1
-    local webpage=$(curl -s $url)
+    local webpage=$1
     # used <img> since its only one in a page
     local imageSrc=$(echo "$webpage" | sed -rn "s@<IMG SRC=\"(.*)\"@\1@p")
-    local title=$(echo "$webpage" | sed -rne "s@<b> (.*) <\/b> <br>@\1@p")
+    local title=$(echo "$webpage" | sed -rne "s@<b> (.+)<\/b> <br>@\1@p")
     wget -O "$title.jpg" "$nasaSite$imageSrc"
     if [ $? = 0 ]; then
         echo -e "${green}Download Successful"
@@ -18,9 +16,31 @@ function downloadImage()
     exit 1
 }
 
+function downloadExplanation()
+{
+    local webpage=$1
+    local explanation=$(echo "$webpage" | sed -rn "/<b> Explanation: <\/b>/p")
+    # echo $explanation
+    echo "$webpage" | awk '
+    BEGIN { pattern="<p> <center>"}
+    /<b> Explanation: <\/b>/ { 
+        start=1
+        while(start==1){
+            getline
+            print
+            if( $0 ~ pattern ){
+                start=0
+                break
+            }
+        }
+        
+        }
+    '
+}
+
 function getHtmlPage()
 {
-    local date="2019 October 25"
+    local date="2019 October 28"
     local archive="etc/nasaArchive.html"
     #wget -O "$archive" https://apod.nasa.gov/apod/archivepix.html
     awk -v date="$date" ' BEGIN { print date }
@@ -32,13 +52,17 @@ function getHtmlPage()
     ' $archive | sed -rne "s@$date:  <a href=\"(.*)\">(.*)</a><br>@\1@p"
 }
 
+function formatDate()
+{
+    sample="2019-01-02"
+}
+
 # setup
 IFS=
 # colours
 black='\033[30m'
 red='\033[31m'
 green='\033[32m'
-brown='\033[33m'
 blue='\033[34m'
 purple='\033[35m'
 cyan='\033[36m'
@@ -58,5 +82,9 @@ nasaSite="https://apod.nasa.gov/apod/"
 # fi
 
 htmlPage=$(getHtmlPage)
-downloadImage $htmlPage
+# combine NASA site and appropriate html page 
+url="$nasaSite$htmlPage"
+page=$(curl -s $url)
+#downloadImage $page
+downloadExplanation $page
 exit 0
