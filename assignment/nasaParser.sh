@@ -19,23 +19,24 @@ function downloadImage()
 function downloadExplanation()
 {
     local webpage=$1
-    local explanation=$(echo "$webpage" | sed -rn "/<b> Explanation: <\/b>/p")
-    # echo $explanation
+    echo $webpage > web.txt
     echo "$webpage" | awk '
     BEGIN { pattern="<p> <center>"}
     /<b> Explanation: <\/b>/ { 
         start=1
         while(start==1){
-            getline
-            print
             if( $0 ~ pattern ){
                 start=0
                 break
             }
+            else{
+                getline
+                print
+            }            
         }
-        
-        }
-    '
+    }
+    ' | sed "s/<a href=\".*\"//g; s/<\/a>//g;
+    s/<p> <center>[[:space:]]*//g;s/>//g;" > output.txt
 }
 
 function getHtmlPage()
