@@ -25,7 +25,6 @@ function downloadImage()
 function downloadExplanation()
 {
     local webpage=$1
-    echo $webpage > web.txt
     local explanation=$(echo "$webpage" | awk '
     BEGIN { pattern="<p> <center>"}
     /<b> Explanation: <\/b>/ { 
@@ -49,9 +48,31 @@ function downloadExplanation()
     echo "$explanation"
 }
 
-function getHtmlPage()
+function downloadImageWithRange()
 {
-    local date="2019 October 28"
+    #d=$(date --date="$startdate +$n days")
+    local startdate=20190512
+    local enddate=20190515
+    local d=
+    local wpage=
+    local n=0
+    until [ "$d" = "$enddate" ]; do  
+        d=$(date -d "$startdate + $n days" +%Y%m%d)
+        ndate=$(date -d "$d" "+%Y %B %d")
+       
+        # combine NASA site and appropriate html page 
+        url="$nasaSite$htmlPage"
+        page=$(curl -s $url)
+        wpage=$(getHtmlFile "$ndate")
+        downloadImage "$wpage"
+        echo "$ndate"
+        ((n++))
+    done
+}
+# get the html file name of the image or details to be downloaded
+function getHtmlFile()
+{
+    local date=$1
     local archive="etc/nasaArchive.html"
     #wget -O "$archive" https://apod.nasa.gov/apod/archivepix.html
     awk -v date="$date" ' BEGIN { print date }
@@ -65,19 +86,22 @@ function getHtmlPage()
 
 function formatDate()
 {
-    sample="2019-01-02"
+    $(date -d "$1")
+    if [ $? != 0 ]; then
+        echo -e "${red}Not a valid date. Exiting..."
+        return 1
+    else
+        echo date -d "$1" "+%Y %B %d"
+    fi
 }
 
 # setup
 IFS=
 # colours
-black='\033[30m'
 red='\033[31m'
 green='\033[32m'
-blue='\033[34m'
 purple='\033[35m'
 cyan='\033[36m'
-grey='\033[37m'
 
 nasaSite="https://apod.nasa.gov/apod/"
 
@@ -92,10 +116,41 @@ nasaSite="https://apod.nasa.gov/apod/"
 #     exit 1
 # fi
 
-htmlPage=$(getHtmlPage)
-# combine NASA site and appropriate html page 
-url="$nasaSite$htmlPage"
-page=$(curl -s $url)
-#downloadImage $page
-#downloadExplanation $page
+# Process command line options
+if [ $# = 0 ]; then
+    echo -e "${red}No arguments provided."
+    exit 1
+elif [ $# = 1 ]; then
+    echo -e "${purple}Not enough arguments provided"
+    exit 1
+elif [ $# = 2 ]; then
+    fullDate=$(formatDate "$2")
+    echo "$fullDate"
+    if [ $fullDate = 1 ]; then
+        exit 1;
+    fi
+    htmlPage=$(getHtmlFile "$fullDate")
+    # combine NASA site and appropriate html page 
+    url="$nasaSite$htmlPage"
+    page=$(curl -s $url)
+    
+    # check arguments
+    case $1 in
+        # download image
+        "-i")
+            downloadImage $page;;
+            #downloadExplanation $page
+            #downloadImageWithRange $page;;
+        # download details
+        "-d")
+            echo "Distinction";;
+        *)
+            echo "${red}Unknown option."
+            exit 1;;
+    esac
+elif [ $# = 3 ]; then
+    echo "blah"
+fi
+
+echo -e "${cyan}Done!"
 exit 0
