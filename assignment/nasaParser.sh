@@ -15,12 +15,12 @@ function downloadImage()
     local imageSrc=$(echo "$webpage" | sed -rn "s@<IMG SRC=\"(.*)\"@\1@p")
     local title=$(downloadTitle $webpage)
     wget -O "$title.jpg" "$nasaSite$imageSrc"
-    # if [ $? = 0 ]; then
-    #     echo -e "${green}Download Successful!\n"
-    #     exit 0
-    # fi
-    # echo -e "${red}Something went wrong. Image not downloaded."
-    # exit 1
+    if [ $? = 0 ]; then
+        echo -e "${green}$title.jpg downloaded successful!\n"
+    else
+        echo -e "${red}Something went wrong. $title.jpg not downloaded."
+        exit 1
+    fi
 }
 
 function downloadExplanation()
@@ -46,23 +46,23 @@ function downloadExplanation()
     sed "s/<a href=\".*\"//g; s/<\/a>//g;
     s/<p> <center>[[:space:]]*//g;s/>//g;
     /^$/d")
-    echo -e "EXPLANATION:\n $explanation"
+    echo "$explanation"
 }
 
 function downloadImagesWithRange()
 {
-    local startdate=20190512
-    local enddate=20190515
-    local d=
-    local wpage=
+    local startdate=$(date -d "$2" +%Y%m%d)
+    local enddate=$(date -d "$3" +%Y%m%d)
     local n=0
+
     until [ "$d" = "$enddate" ]; do  
         d=$(date -d "$startdate + $n days" +%Y%m%d)
+        echo $d
         ndate=$(date -d "$d" "+%Y %B %d")
        
         wpage=$(getHtmlFile "$ndate")
-        downloadImage "$wpage"
-        echo "$ndate"
+        downloadImage $wpage
+        echo -e "${cyan}ndate"
         ((n++))
     done
 }
@@ -120,17 +120,23 @@ else
     fullDate=$(formatDate "$2")
     # get the nasa archive page 
     wget -O "$archive" https://apod.nasa.gov/apod/archivepix.html
-    page=$(getHtmlFile "$fullDate")
+    page=$(getHtmlFile $fullDate)
 
     # check arguments
     case $1 in
         "-i")
             downloadImage $page;;
         "-d")
+            echo "TITLE:"
             downloadTitle $page
+            echo "EXPLANATION:"
             downloadExplanation $page;;
         "-r")
-            downloadImagesWithRange "$page";;
+            if [ $# < 3 ]; then
+                echo -e "${red}Not enough arguments."
+                exit 1
+            fi
+            downloadImagesWithRange $page $2 $3;;
         # specify image filename
         "-if")
             downloadImage $page "$3";;
