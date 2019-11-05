@@ -14,6 +14,11 @@ function downloadImage()
     # used <img> since its only one in a page
     local imageSrc=$(echo "$webpage" | sed -rn "s@<IMG SRC=\"(.*)\"@\1@p")
     local title=$(downloadTitle $webpage)
+    # check 2nd argument for filename
+    if [ $# = 2 ]; then
+        title="$2"
+    fi
+
     wget -O "$title.jpg" "$nasaSite$imageSrc"
     if [ $? = 0 ]; then
         echo -e "${green}$title.jpg downloaded successful!\n"
@@ -139,11 +144,12 @@ else
             downloadImagesWithRange $page $2 $3;;
         # specify image filename
         "-if")
-            downloadImage $page "$3";;
+            downloadImage $page $3;;
         # specify details output file
         "-do")
-            cat downloadTitle $page > "$3"
-            cat downloadExplanation $page > "$3"
+            title=$(downloadTitle $page) 
+            exp=$(downloadExplanation $page)
+            echo -e "TITLE: $title \n EXPLANATIION $exp" > "$3"
             echo -e "${green}Details successfully saved.";;
         *)
             echo -e "${red}Unknown option."
